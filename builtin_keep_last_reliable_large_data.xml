@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.3.1/rti_dds_qos_profiles.xsd" version="5.3.1">
+
+  <qos_library name="ViperRos2QosLibrary">
+    <!-- Builtin profile values can be seen in $NDDS_HOME/resource/xml/BuiltinProfiles.documentationONLY.xml
+         Inherit from the KeepLastReliable.LargeData by default. 3 flow controllers are available in the
+         builtin profiles: FastFlow 100MB/s, MediumFlow 25MB/s, SlowFlow 6.25 MB/sec. To use a flow controller,
+         append the type of flow to the base_name, e.g. BuiltinQosLibExp::Generic.KeepLastReliable.LargeData.FastFlow
+    -->
+
+    <!-- without the flow controller, RSIM does not function properly - if navcam stereo is triggered, rqt does not display
+    the image, and no point cloud shows up in rviz -->
+    <!-- qos_profile name="ViperRos2DefaultQos" base_name="BuiltinQosLibExp::Generic.KeepLastReliable.LargeData" is_default_qos="true" -->
+
+    <!-- with the FastFlow flow controller, things are better - images show up in rqt, and point clouds show up _most_ of the
+    time - however, with every stereo pair multiple warnings (more than 20, but inconsistent number each time) show up in the console:
+    [gzserver-2] PRESWriterHistoryDriver_completeBeAsynchPub:!make_sample_reclaimable
+    There is no indication what topic(s) are complaining about losing data.
+    -->
+    <qos_profile name="ViperRos2DefaultQos" base_name="BuiltinQosLibExp::Generic.KeepLastReliable.LargeData.FastFlow" is_default_qos="true">
+    </qos_profile>
+
+  </qos_library>
+</dds>
