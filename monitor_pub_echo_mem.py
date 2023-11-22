@@ -47,6 +47,8 @@ def main():
         )
         rmw_impl = os.environ.get('RMW_IMPLEMENTATION', 'not set')
         qos_file = os.environ.get('NDDS_QOS_PROFILES', 'not set')
+        ament_prefix_path = os.environ.get('AMENT_PREFIX_PATH', 'not set')
+        nddshome = os.environ.get('NDDSHOME', 'not set')
 
         def print_and_log(msg):
             print(msg)
@@ -54,6 +56,8 @@ def main():
 
         print_and_log(f'# RMW_IMPLEMENTATION={rmw_impl}')
         print_and_log(f'# NDDS_QOS_PROFILES={qos_file}')
+        print_and_log(f'# AMENT_PREFIX_PATH={ament_prefix_path}')
+        print_and_log(f'# NDDSHOME={nddshome}')
         print_and_log(f'# {pub_cmd}')
         print_and_log(f'# {echo_cmd}')
 

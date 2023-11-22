@@ -45,7 +45,7 @@ def main():
         xytext=(0, -20),
         ha='center')
     ax.legend(loc='lower right')
-    ax.set_ylim(0, 200)
+    ax.set_ylim(0, 300)
     ax.xaxis_date()
     fig.tight_layout()
 
