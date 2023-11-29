@@ -17,18 +17,23 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--publish-rate', default='1')
+    parser.add_argument('--history-depth', default='10')
 
     args = parser.parse_args()
 
     pub_cmd = [
         'ros2', 'topic', 'pub',
         '-r', args.publish_rate,
+        '--qos-history', 'keep_last',
+        '--qos-depth', args.history_depth,
         '/connext/odometry',
         'nav_msgs/msg/Odometry',
     ]
     echo_cmd = [
         'ros2', 'topic', 'echo',
         '--no-daemon',
+        '--qos-history', 'keep_last',
+        '--qos-depth', args.history_depth,
         '/connext/odometry',
         'nav_msgs/msg/Odometry',
     ]
