@@ -83,12 +83,16 @@ def main():
         plt.style.use('fivethirtyeight')
         fig, ax = plt.subplots(1, 1, figsize=(10, 8))
 
+        max_y = 200
+
         def render(_):
+            nonlocal max_y
             now = time.time()
             times.append(datetime.datetime.fromtimestamp(now))
             pub_ram.append(ps_pub.memory_info()[0] / 1024 / 1024)
             echo_ram.append(ps_echo.memory_info()[0] / 1024 / 1024)
             msg = f'{now}, {pub_ram[-1]}, {echo_ram[-1]}'
+            max_y = max(max_y, pub_ram[-1], echo_ram[-1])
             # print(msg)
             log.write(f'{msg}\n')
             ax.cla()
@@ -107,7 +111,7 @@ def main():
                 xytext=(0, -20),
                 ha='center')
             ax.legend(loc='lower right')
-            ax.set_ylim(0, 200)
+            ax.set_ylim(0, max_y)
             ax.xaxis_date()
             fig.tight_layout()
 
