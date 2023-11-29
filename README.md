@@ -35,5 +35,7 @@ RMW_IMPLEMENTATION=rmw_connextdds python3 ./monitor_pub_echo_mem.py
 If you want to use a custom QoS XML:
 
 ```
-NDDS_QOS_PROFILES=`pwd`/builtin_keep_last_reliable_large_data.xml RMW_IMPLEMENTATION=rmw_connextdds python3 ./monitor_pub_echo_mem.py
+NDDS_QOS_PROFILES=`pwd`/builtin_keep_last_reliable_large_data.xml \
+RMW_IMPLEMENTATION=rmw_connextdds \
+python3 ./monitor_pub_echo_mem.py
 ```
