@@ -50,10 +50,11 @@ def main():
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        rmw_impl = os.environ.get('RMW_IMPLEMENTATION', 'not set')
-        qos_file = os.environ.get('NDDS_QOS_PROFILES', 'not set')
+        rmw_impl = os.environ.get('RMW_IMPLEMENTATION', 'no RMW')
+        qos_file = os.environ.get('NDDS_QOS_PROFILES', 'no QOS')
         ament_prefix_path = os.environ.get('AMENT_PREFIX_PATH', 'not set')
-        nddshome = os.environ.get('NDDSHOME', 'not set')
+        nddshome = os.environ.get('NDDSHOME', 'no DDS')
+        title = f'{rmw_impl}, {os.path.basename(qos_file)}, {os.path.basename(nddshome)}'
 
         def print_and_log(msg):
             print(msg)
@@ -114,6 +115,7 @@ def main():
             ax.set_ylim(0, max_y)
             ax.xaxis_date()
             fig.tight_layout()
+            plt.title(title)
 
         _ = matplotlib.animation.FuncAnimation(fig, render, interval=100, cache_frame_data=False)
         plt.show()
