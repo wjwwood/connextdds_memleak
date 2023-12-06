@@ -39,3 +39,27 @@ NDDS_QOS_PROFILES=`pwd`/builtin_keep_last_reliable_large_data.xml \
 RMW_IMPLEMENTATION=rmw_connextdds \
 python3 ./monitor_pub_echo_mem.py
 ```
+
+### How to Reproduce the Ramp Curve Example
+
+We've narrowed it down to the shared memory settings, which are needed to get the observed "ramp" shaped curve.
+Where the memory use climbs quickly but then stabalizes are some memory usage level:
+
+![run_1000hz_connext_viper_qos_figure](run_1000hz_connext_viper_qos/Figure_1.png)
+
+The environement used is:
+
+- ROS 2 Rolling
+- Connext 6.0.1 (though it has been observed with 5.3.1 and 6.1+)
+
+And the command used:
+
+```
+RMW_IMPLEMENTATION=rmw_connextdds \
+NDDS_QOS_PROFILES=/home/william/connextdds_memleak/viper_ros2_qos_with_tcp.xml \
+python3 ./monitor_pub_echo_mem.py --publish-rate 1000
+```
+
+The high publish rate just increases the rate of memory use increase.
+Lower publish rates still produce the same curve, just over a longer period.
+With a rate of 1kHz the stable memory usage limit can been reached in a few minutes.

@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<dds
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.3.1/rti_dds_qos_profiles.xsd"
+  version="5.3.1"
+>
+  <!-- ################################################################### -->
+  <!-- ## ViperRos2QosLibrary -->
+  <!-- ################################################################### -->
+  <qos_library name="ViperRos2QosLibrary">
+    <!-- Builtin profile values can be seen in $NDDS_HOME/resource/xml/BuiltinProfiles.documentationONLY.xml
+         Inherit from the KeepLastReliable.LargeData by default. 3 flow controllers are available in the
+         builtin profiles: FastFlow 100MB/s, MediumFlow 25MB/s, SlowFlow 6.25 MB/sec. To use a flow controller,
+         append the type of flow to the base_name, e.g. BuiltinQosLibExp::Generic.KeepLastReliable.LargeData.FastFlow
+    -->
+    <qos_profile
+      name="ViperRos2DefaultQos"
+      base_name="BuiltinQosLibExp::Generic.KeepLastReliable.LargeData.FastFlow"
+      is_default_qos="true"
+    >
+      <participant_qos>
+
+        <!-- ensure all publishers are publishing asynchronously -->
+        <discovery_config>
+          <publication_writer_publish_mode>
+            <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </publication_writer_publish_mode>
+          <subscription_writer_publish_mode>
+            <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </subscription_writer_publish_mode>
+          <service_request_writer_publish_mode>
+            <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </service_request_writer_publish_mode>
+        </discovery_config>
+
+        <!-- when accept_unknown_peers is false, unicast peers must include
+             each other in their NDDS_DISCOVERY_PEERS list, otherwise they will not
+             establish a connection.
+             https://community.rti.com/static/documentation/connext-dds/5.2.3/doc/manuals/connext_dds/html_files/RTI_ConnextDDS_CoreLibraries_UsersManual/Content/UsersManual/DISCOVERY_Qos.htm#domains_2763211417_920635
+             This is more secure and helps prevent accidental traffic from corrupting
+             the data space. However, it also prevents introspection of the data space
+             by external tools like AdminConsole and there is more work to configure
+             the peers lists. During development it is easier to keep this set to 'true'
+             but we should consider changing to 'false' when things stabilize.
+             VIPERSW-8292
+        -->
+        <discovery>
+          <accept_unknown_peers>true</accept_unknown_peers>
+        </discovery>
+
+        <resource_limits>
+          <!-- increase max property size to accommodate flow controllers -->
+          <participant_property_string_max_length>8192</participant_property_string_max_length>
+          <participant_property_list_max_length>8192</participant_property_list_max_length>
+          <!-- disabling type-code support -->
+          <type_code_max_serialized_length>0</type_code_max_serialized_length>
+          <type_object_max_serialized_length>0</type_object_max_serialized_length>
+        </resource_limits>
+
+        <property>
+          <value>
+
+            <!-- === UDP Transport ======================================================================== -->
+            <element>
+              <!-- Set max message size below MTU size. This makes delivery *crazy* slow but it shouldn't >
+              <name>dds.transport.UDPv4.builtin.parent.message_size_max</name>
+              <value>1400</value -->
+              <!-- match the token size of the builtin flow controllers -->
+              <name>dds.transport.UDPv4.builtin.parent.message_size_max</name>
+              <value>8192</value>
+            </element>
+            <element>
+              <name>dds.transport.UDPv4.builtin.send_socket_buffer_size</name>
+              <value>262144</value>
+            </element>
+            <element>
+              <name>dds.transport.UDPv4.builtin.recv_socket_buffer_size</name>
+              <value>4194304</value>
+            </element>
+
+            <!-- === SHMEM Transport ====================================================================== -->
+            <element>
+              <name>dds.transport.shmem.builtin.parent.message_size_max</name>
+              <value>50332567</value>
+            </element>
+            <element>
+              <name>dds.transport.shmem.builtin.receive_buffer_size</name>
+              <value>121634816</value>
+            </element>
+            <element>
+              <name>dds.transport.shmem.builtin.received_message_count_max</name>
+              <value>102</value>
+            </element>
+
+            <!-- Set all flow controllers to use round robin scheduling so all writers are treated the same.
+                 With the default scheduling policy, 8MB images were being delayed because priority was being
+                 given to a 137MB point cloud -->
+            <element>
+              <name>dds.flow_controller.token_bucket.fast_flow.scheduling_policy</name>
+              <value>DDS_RR_FLOW_CONTROLLER_SCHED_POLICY</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.medium_flow.scheduling_policy</name>
+              <value>DDS_RR_FLOW_CONTROLLER_SCHED_POLICY</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.slow_flow.scheduling_policy</name>
+              <value>DDS_RR_FLOW_CONTROLLER_SCHED_POLICY</value>
+            </element>
+
+            <!-- VPN TCP Plugin Flow controller -->
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.token_bucket.max_tokens</name>
+              <value>1</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.token_bucket.tokens_added_per_period</name>
+              <value>1</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.token_bucket.bytes_per_token</name>
+              <value>6250</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.token_bucket.period.sec</name>
+              <value>0</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.token_bucket.period.nanosec</name>
+              <value>10000000</value>
+            </element>
+            <element>
+              <name>dds.flow_controller.token_bucket.vpn_flow.scheduling_policy</name>
+              <value>DDS_RR_FLOW_CONTROLLER_SCHED_POLICY</value>
+            </element>
+
+          </value>
+        </property>
+      </participant_qos>
+      <publisher_qos>
+      </publisher_qos>
+      <subscriber_qos>
+      </subscriber_qos>
+
+      <!-- example of configuring topic-specific QoS, ref: https://github.com/ros2/rmw_connext/blob/master/README.md -->
+      <!-- datawriter_qos topic_filter="rt/viper/navcam/*">
+        <publish_mode>
+          <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          <flow_controller_name>dds.flow_controller.token_bucket.medium_flow</flow_controller_name>
+        </publish_mode>
+      </datawriter_qos -->
+
+    </qos_profile>
+  </qos_library>
+</dds>

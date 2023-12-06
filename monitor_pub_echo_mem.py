@@ -112,10 +112,10 @@ def main():
                 xytext=(0, -20),
                 ha='center')
             ax.legend(loc='lower right')
-            ax.set_ylim(0, max_y)
+            ax.set_ylim(0, int(max_y * 1.10))
             ax.xaxis_date()
             fig.tight_layout()
-            plt.title(title)
+            plt.title(title, fontsize=12)
 
         _ = matplotlib.animation.FuncAnimation(fig, render, interval=100, cache_frame_data=False)
         plt.show()
