@@ -2,6 +2,8 @@
 
 Attempts to reproduce a potential memory leak when using rmw_connextdds with ROS 2.
 
+The result was that it wasn't a memory leak, but instead a shmem setting that caused unexpected memory growth that was ultimately bounded.
+
 ## Running
 
 The quickstart is to set up your environment how ever you want to test it, then run:
